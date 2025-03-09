@@ -7,6 +7,7 @@ from flask_backend.payments import payments_bp
 from flask_backend.vehicles import vehicles_bp
 from flask_backend.shifts import shifts_bp
 from flask_backend.workers import workers_bp
+from flask_backend.user import user_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -27,6 +28,8 @@ app.register_blueprint(shifts_bp, url_prefix='/shifts')
 app.register_blueprint(vehicles_bp, url_prefix='/vehicles')
 # payments.py
 app.register_blueprint(payments_bp, url_prefix='/payments')
+# user.py
+app.register_blueprint(user_bp, url_prefix='/user')
 
 if __name__ == '__main__':
     with app.app_context():

@@ -1,4 +1,3 @@
-# workers.py
 from flask import Blueprint, request, jsonify
 from flask_backend.model import db, User
 import logging
@@ -18,13 +17,13 @@ def get_workers():
         for u in users:
             data.append({
                 "id": u.id,
-                "numeric_id": str(u.identity),  # Use identity as numeric_id
+                "identity": str(u.identity),  # Changed from "numeric_id" to "identity"
                 "name": u.name or "",
                 "phone": u.phone or "",
                 "location": u.location or "",
                 "joiningDate": u.joining_date.isoformat() if u.joining_date else "",
                 "role": u.role,
-                "workerType": u.worker_type or "",
+                "workerType": u.worker_type or "",  # Ensure consistency with frontend
                 "hashedPassword": u.password
             })
         logger.debug(f"Returning workers data: {data}")
@@ -69,13 +68,13 @@ def add_worker():
 
     return jsonify({
         "id": new_user.id,
-        "identity": str(new_user.identity),
+        "identity": str(new_user.identity),  # Changed from "numeric_id" to "identity"
         "name": new_user.name or "",
         "phone": new_user.phone or "",
         "location": new_user.location or "",
         "joiningDate": new_user.joining_date.isoformat() if new_user.joining_date else "",
         "role": new_user.role,
-        "workerType": new_user.worker_type
+        "workerType": new_user.worker_type  # Changed to "workerType"
     }), 201
 
 @workers_bp.route('/<int:user_id>', methods=['DELETE'])
