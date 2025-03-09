@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_backend.model import db, User
 import logging
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash  # Added check_password_hash for future use
 
 workers_bp = Blueprint('workers', __name__)
 
@@ -17,14 +18,14 @@ def get_workers():
         for u in users:
             data.append({
                 "id": u.id,
-                "identity": str(u.identity),  # Changed from "numeric_id" to "identity"
+                "identity": str(u.identity),
                 "name": u.name or "",
                 "phone": u.phone or "",
                 "location": u.location or "",
                 "joiningDate": u.joining_date.isoformat() if u.joining_date else "",
                 "role": u.role,
-                "workerType": u.worker_type or "",  # Ensure consistency with frontend
-                "hashedPassword": u.password
+                "workerType": u.worker_type or "",
+                "hashedPassword": u.password  # Return the hashed password
             })
         logger.debug(f"Returning workers data: {data}")
         return jsonify(data), 200
@@ -38,7 +39,7 @@ def add_worker():
     data = request.get_json() or {}
     logger.debug(f"Request JSON: {data}")
 
-    required = ["identity", "name", "phone", "location", "joining_date", "worker_type"]
+    required = ["identity", "name", "phone", "location", "joining_date", "password", "role"]
     missing = [f for f in required if not data.get(f)]
     if missing:
         return jsonify({"error": f"Missing fields: {missing}"}), 400
@@ -53,11 +54,15 @@ def add_worker():
         except ValueError:
             return jsonify({"error": "Invalid date format, use YYYY-MM-DD"}), 400
 
+    # Hash the password before saving
+    hashed_password = generate_password_hash(data["password"], method='sha256')
+    logger.debug(f"Generated hashed password: {hashed_password}")
+
     new_user = User(
         identity=data["identity"],
-        password="",  # or hashed if desired
-        role="worker",
-        worker_type=data["worker_type"],
+        password=hashed_password,  # Store the hashed password
+        role=data["role"],
+        worker_type=data.get("worker_type") if data["role"] == "worker" else None,
         phone=data["phone"],
         location=data["location"],
         name=data["name"],
@@ -65,16 +70,17 @@ def add_worker():
     )
     db.session.add(new_user)
     db.session.commit()
+    logger.debug(f"Added user with id: {new_user.id}")
 
     return jsonify({
         "id": new_user.id,
-        "identity": str(new_user.identity),  # Changed from "numeric_id" to "identity"
+        "identity": str(new_user.identity),
         "name": new_user.name or "",
         "phone": new_user.phone or "",
         "location": new_user.location or "",
         "joiningDate": new_user.joining_date.isoformat() if new_user.joining_date else "",
         "role": new_user.role,
-        "workerType": new_user.worker_type  # Changed to "workerType"
+        "workerType": new_user.worker_type or ""
     }), 201
 
 @workers_bp.route('/<int:user_id>', methods=['DELETE'])
