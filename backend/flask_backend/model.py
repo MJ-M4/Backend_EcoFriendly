@@ -1,4 +1,3 @@
-# model.py
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 
@@ -15,17 +14,17 @@ class User(db.Model):
     phone = db.Column(db.String(50), nullable=True)
     location = db.Column(db.String(100), nullable=True)
 
+    # NEW columns for your Worker page:
+    name = db.Column(db.String(100), nullable=True)
+    joining_date = db.Column(db.Date, nullable=True)
+
     def __repr__(self):
         return f"<User {self.identity} - {self.role}>"
 
 def hash_existing_passwords():
-    """
-    Hash any plaintext passwords in the database.
-    If a user's password length < 20 chars, we'll assume it's plaintext.
-    """
+    """Hash any plaintext passwords in the DB if length < 20."""
     users = User.query.all()
     for user in users:
-        # Simple check if password is not hashed
         if len(user.password) < 20:
             user.password = generate_password_hash(user.password)
             db.session.add(user)
@@ -33,4 +32,4 @@ def hash_existing_passwords():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        print(f"Error while hashing passwords: {e}")
+        print(f"Error hashing passwords: {e}")
