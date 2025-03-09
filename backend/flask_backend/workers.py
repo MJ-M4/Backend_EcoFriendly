@@ -18,13 +18,14 @@ def get_workers():
         for u in users:
             data.append({
                 "id": u.id,
-                "identity": u.identity,
+                "numeric_id": str(u.identity),  # Use identity as numeric_id
                 "name": u.name or "",
                 "phone": u.phone or "",
                 "location": u.location or "",
                 "joiningDate": u.joining_date.isoformat() if u.joining_date else "",
                 "role": u.role,
-                "workerType": u.worker_type or ""
+                "workerType": u.worker_type or "",
+                "hashedPassword": u.password
             })
         logger.debug(f"Returning workers data: {data}")
         return jsonify(data), 200
@@ -68,7 +69,7 @@ def add_worker():
 
     return jsonify({
         "id": new_user.id,
-        "identity": new_user.identity,
+        "identity": str(new_user.identity),
         "name": new_user.name or "",
         "phone": new_user.phone or "",
         "location": new_user.location or "",

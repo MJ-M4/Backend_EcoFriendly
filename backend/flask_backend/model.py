@@ -33,3 +33,28 @@ def hash_existing_passwords():
     except Exception as e:
         db.session.rollback()
         print(f"Error hashing passwords: {e}")
+class Shift(db.Model):
+    __tablename__ = 'shifts'
+    id = db.Column(db.Integer, primary_key=True)
+    worker_id = db.Column(db.BigInteger, db.ForeignKey('users.identity'), nullable=False)  # Matches BIGINT UNSIGNED
+    date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+
+class Vehicle(db.Model):
+    __tablename__ = 'vehicles'
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False)
+    license_plate = db.Column(db.String(20), nullable=False, unique=True)
+    status = db.Column(db.String(20), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    last_maintenance = db.Column(db.Date, nullable=False)
+class Payment(db.Model):
+    __tablename__ = 'payments'
+    id = db.Column(db.Integer, primary_key=True)
+    worker_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    payment_date = db.Column(db.Date, nullable=True)
+    status = db.Column(db.Enum('Pending', 'Paid'), nullable=False, default='Pending')
+    notes = db.Column(db.Text)

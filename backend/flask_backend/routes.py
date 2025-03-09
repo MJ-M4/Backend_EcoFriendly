@@ -34,13 +34,17 @@ def register_user():
     worker_type = data.get('worker_type')
     phone = data.get('phone')
     location = data.get('location')
+    name = data.get('name')  # Add name
+    joining_date = data.get('joiningDate')  # Add joiningDate (note the camelCase from frontend)
     registration = Register(
         identity=identity,
         password=password,
         role=role,
         worker_type=worker_type,
         phone=phone,
-        location=location
+        location=location,
+        name=name,
+        joining_date=joining_date
     )
     response, status_code = registration.register_user()
     return jsonify(response), status_code
