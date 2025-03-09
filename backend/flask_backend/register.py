@@ -1,0 +1,56 @@
+# register.py
+from werkzeug.security import generate_password_hash
+from flask_backend.model import User, db
+
+class Register:
+    """
+    Handles registration for new users (workers or managers).
+    """
+    def __init__(self, identity, password, role='worker', worker_type=None, phone=None, location=None):
+        self.identity = identity
+        self.password = password
+        self.role = role
+        self.worker_type = worker_type
+        self.phone = phone
+        self.location = location
+
+    def validate_input(self):
+        if not self.identity or not self.password:
+            return {"error": "ID and password are required"}, 400
+        return None
+
+    def check_existing_user(self):
+        # Check if a user with this numeric identity already exists
+        existing_user = User.query.filter_by(identity=self.identity).first()
+        if existing_user:
+            return {"error": "User ID already exists"}, 400
+        return None
+
+    def register_user(self):
+        # 1) Validate
+        validation_error = self.validate_input()
+        if validation_error:
+            return validation_error
+
+        # 2) Check if user exists
+        existing_user_error = self.check_existing_user()
+        if existing_user_error:
+            return existing_user_error
+
+        # 3) Hash password & create user
+        try:
+            hashed_password = generate_password_hash(self.password)
+            new_user = User(
+                identity=self.identity,
+                password=hashed_password,
+                role=self.role,
+                worker_type=self.worker_type,
+                phone=self.phone,
+                location=self.location
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return {"message": "Registration successful!"}, 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": "An error occurred during registration", "details": str(e)}, 500

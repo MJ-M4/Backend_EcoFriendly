@@ -1,34 +1,28 @@
-# backend/app.py
+# app.py
 from flask import Flask
 from flask_cors import CORS
-from extensions import db  # Import db from extensions.py
+from flask_backend.Config import Config
+from flask_backend.model import db, hash_existing_passwords
+from flask_backend.routes import auth_bp
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for React frontend
+CORS(app)
 
-# Configure MySQL database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:Jayusi2024@localhost/urban_waste_management'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Load database config
+app.config.from_object(Config)
 
-# Initialize db with the app
+# Initialize the database
 db.init_app(app)
 
-# Import and register blueprints
-from routes.auth import auth_bp
-from routes.bins import bins_bp
-from routes.workers import workers_bp
-from routes.shifts import shifts_bp
-from routes.payments import payments_bp
-from routes.vehicles import vehicles_bp
-from routes.settings import settings_bp
-
-app.register_blueprint(auth_bp, url_prefix='/api/auth')
-app.register_blueprint(bins_bp, url_prefix='/api/bins')
-app.register_blueprint(workers_bp, url_prefix='/api/workers')
-app.register_blueprint(shifts_bp, url_prefix='/api/shifts')
-app.register_blueprint(payments_bp, url_prefix='/api/payments')
-app.register_blueprint(vehicles_bp, url_prefix='/api/vehicles')
-app.register_blueprint(settings_bp, url_prefix='/api/settings')
+# Register routes (Blueprint)
+app.register_blueprint(auth_bp)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    with app.app_context():
+        # Create tables if they don't exist
+        db.create_all()
+        # Optionally hash any plaintext passwords
+        hash_existing_passwords()
+
+    # Start the Flask server
+    app.run(debug=True)

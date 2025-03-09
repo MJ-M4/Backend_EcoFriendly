@@ -1,0 +1,29 @@
+service: login-backend1  # Name of your service
+
+provider:
+  name: aws
+  runtime: python3.11  # Update to your Python version
+  region: us-east-1    # Update to your preferred region
+  deploymentBucket:
+    name: login-backend-deployment-bucket  # Specify your bucket name
+
+functions:
+  login:
+    handler: app.lambda_handler  # Points to the login function in app.py
+    events:
+      - http:
+          path: login            # API Gateway endpoint
+          method: post           # HTTP method
+          cors: true             # Enable CORS
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**  # Exclude unnecessary files
