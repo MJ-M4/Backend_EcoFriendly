@@ -1,92 +1,110 @@
 # backend/Interface/users.py
 from flask import Blueprint, request, jsonify
-from Models.user import User
 from pydantic import BaseModel, Field, ValidationError
 from typing import Literal, Optional
 from http import HTTPStatus
-from DataLayer.errors import INVALID_INPUT_DATA, DB_USER_NOT_FOUND, DB_INVALID_CREDENTIALS
+
+from Models.user import User
+from DataLayer.errors import (
+    INVALID_INPUT_DATA,
+    DB_USER_NOT_FOUND,
+    DB_CONNECTION_ERROR,
+    DB_QUERY_ERROR,
+    DB_USER_ALREADY_EXISTS
+)
 
 class UserRequest(BaseModel):
-    user_id: str = Field(..., min_length=1, description="User ID (e.g., 207705096)")
-    password: str = Field(..., min_length=1, description="User password")
-    role: Literal['manager', 'worker']
+    user_id: str = Field(..., min_length=1)
+    password: str = Field(..., min_length=1)
+    role: Literal['manager','worker'] = 'worker'
     name: str = Field(..., min_length=1)
-    phone: str = Field(..., min_length=1)
-    location: str = Field(..., min_length=1)
-    joining_date: str
-    worker_type: Optional[Literal['Driver', 'Cleaner', 'Maintenance Worker']]
+    phone: Optional[str] = None
+    location: Optional[str] = None
+    joining_date: Optional[str] = None
+    worker_type: Optional[str] = None
 
 class UserResponse(BaseModel):
     user_id: str
-    role: Literal['manager', 'worker']
+    role: Literal['manager','worker']
     name: str
-    phone: str
-    location: str
-    joining_date: str
-    worker_type: Optional[Literal['Driver', 'Cleaner', 'Maintenance Worker']]
-    password: Optional[str]
-
-class PasswordUpdateRequest(BaseModel):
-    current_password: str = Field(..., min_length=1, description="Current password")
-    new_password: str = Field(..., min_length=1, description="New password")
+    phone: Optional[str]
+    location: Optional[str]
+    joining_date: Optional[str]
+    worker_type: Optional[str]
 
 users_bp = Blueprint('users', __name__)
 
 @users_bp.route('', methods=['GET'])
 def get_all_users():
     try:
-        print("Starting get_all_users endpoint")
-        user = User()
-        print("User object created")
-        users = user.get_all_users()
-        print(f"Fetched users: {users}")
-        response_data = [UserResponse(**u).dict() for u in users]
-        print(f"Response data: {response_data}")
-        return jsonify(response_data), HTTPStatus.OK
+        user_obj = User()
+        data = user_obj.get_all_users()
+        resp = [UserResponse(**u).dict() for u in data]
+        return jsonify(resp), HTTPStatus.OK
     except Exception as e:
-        print(f"Error in get_all_users: {str(e)}")
-        import traceback
-        print(traceback.format_exc())
-        return jsonify({'message': str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
+        msg = str(e)
+        if msg in [DB_CONNECTION_ERROR, DB_QUERY_ERROR]:
+            return jsonify({'message': msg}), HTTPStatus.SERVICE_UNAVAILABLE
+        return jsonify({'message': "Unexpected error."}), HTTPStatus.INTERNAL_SERVER_ERROR
+
+@users_bp.route('/<user_id>', methods=['GET'])
+def get_user(user_id):
+    try:
+        user_obj = User()
+        user_obj.load_by_id(user_id)
+        resp = UserResponse(
+            user_id=user_obj.user_id,
+            role=user_obj.role,
+            name=user_obj.name,
+            phone=user_obj.phone,
+            location=user_obj.location,
+            joining_date=user_obj.joining_date,
+            worker_type=user_obj.worker_type
+        ).dict()
+        return jsonify(resp), HTTPStatus.OK
+    except Exception as e:
+        msg = str(e)
+        if msg == DB_USER_NOT_FOUND:
+            return jsonify({'message': "User not found."}), HTTPStatus.NOT_FOUND
+        elif msg in [DB_CONNECTION_ERROR, DB_QUERY_ERROR]:
+            return jsonify({'message': msg}), HTTPStatus.SERVICE_UNAVAILABLE
+        return jsonify({'message': "Unexpected error."}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 @users_bp.route('', methods=['POST'])
-def add_user():
+def create_user():
     try:
         data = UserRequest(**request.get_json())
-        user = User()
-        user = user.add_user(data.dict())
-        response_data = UserResponse(**user.to_dict())
-        return jsonify(response_data.dict()), HTTPStatus.CREATED
-    except ValidationError as e:
+        user_obj = User().add_user(data.dict())
+        resp = UserResponse(
+            user_id=user_obj.user_id,
+            role=user_obj.role,
+            name=user_obj.name,
+            phone=user_obj.phone,
+            location=user_obj.location,
+            joining_date=user_obj.joining_date,
+            worker_type=user_obj.worker_type
+        ).dict()
+        return jsonify(resp), HTTPStatus.CREATED
+    except ValidationError:
         return jsonify({'message': INVALID_INPUT_DATA}), HTTPStatus.BAD_REQUEST
     except Exception as e:
-        return jsonify({'message': str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
+        msg = str(e)
+        if msg == DB_USER_ALREADY_EXISTS:
+            return jsonify({'message': msg}), HTTPStatus.CONFLICT
+        elif msg in [DB_CONNECTION_ERROR, DB_QUERY_ERROR]:
+            return jsonify({'message': msg}), HTTPStatus.SERVICE_UNAVAILABLE
+        return jsonify({'message': "Unexpected error."}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 @users_bp.route('/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
-        user = User()
-        user.delete_user(user_id)
+        user_obj = User()
+        user_obj.delete_user(user_id)
         return jsonify({'message': 'User deleted successfully'}), HTTPStatus.OK
     except Exception as e:
-        error_message = str(e)
-        if error_message == DB_USER_NOT_FOUND:
-            return jsonify({'message': error_message}), HTTPStatus.NOT_FOUND
-        return jsonify({'message': error_message}), HTTPStatus.INTERNAL_SERVER_ERROR
-
-@users_bp.route('/<user_id>/password', methods=['PUT'])
-def update_password(user_id):
-    try:
-        data = PasswordUpdateRequest(**request.get_json())
-        user = User()
-        user.update_password(user_id, data.current_password, data.new_password)
-        return jsonify({'message': 'Password updated successfully'}), HTTPStatus.OK
-    except ValidationError as e:
-        return jsonify({'message': INVALID_INPUT_DATA}), HTTPStatus.BAD_REQUEST
-    except Exception as e:
-        error_message = str(e)
-        if error_message == DB_USER_NOT_FOUND:
-            return jsonify({'message': error_message}), HTTPStatus.NOT_FOUND
-        if error_message == DB_INVALID_CREDENTIALS:
-            return jsonify({'message': 'Current password is incorrect'}), HTTPStatus.UNAUTHORIZED
-        return jsonify({'message': error_message}), HTTPStatus.INTERNAL_SERVER_ERROR
+        msg = str(e)
+        if msg == DB_USER_NOT_FOUND:
+            return jsonify({'message': "User not found."}), HTTPStatus.NOT_FOUND
+        elif msg in [DB_CONNECTION_ERROR, DB_QUERY_ERROR]:
+            return jsonify({'message': msg}), HTTPStatus.SERVICE_UNAVAILABLE
+        return jsonify({'message': "Unexpected error."}), HTTPStatus.INTERNAL_SERVER_ERROR

@@ -15,5 +15,4 @@ class BaseModel(ABC):
 
     @abstractmethod
     def to_dict(self):
-        """Convert the model to a dictionary for JSON serialization."""
         pass

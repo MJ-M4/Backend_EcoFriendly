@@ -1,10 +1,11 @@
 # backend/DataLayer/errors.py
 
 # Database-related errors
-DB_CONNECTION_ERROR = "Failed to connect to the database. Please try again later."
-DB_QUERY_ERROR = "An error occurred while executing the database query."
-DB_USER_NOT_FOUND = "User not found with the provided ID."
-DB_INVALID_CREDENTIALS = "Invalid ID or password."
+DB_CONNECTION_ERROR = "Database connection failed."
+DB_QUERY_ERROR = "An unexpected database error occurred."
+DB_USER_NOT_FOUND = "The ID you entered does not exist."
+DB_INVALID_CREDENTIALS = "The ID or password you entered is incorrect."
+DB_USER_ALREADY_EXISTS = "A user with this ID already exists."
 
-# Validation errors
-INVALID_INPUT_DATA = "Invalid input data provided."
+# Validation
+INVALID_INPUT_DATA = "Please check your input data and try again."
