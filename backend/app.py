@@ -10,7 +10,7 @@ from Interface.vehicles import vehicles_bp
 from Interface.payments import payments_bp
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3001"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 # Register blueprints under /api/ prefix
 app.register_blueprint(auth_bp, url_prefix='/api/auth')

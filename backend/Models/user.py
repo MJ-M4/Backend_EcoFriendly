@@ -12,7 +12,7 @@ class User(BaseModel):
     def __init__(self):
         super().__init__()
         self.user_id = None
-        self.password = None
+        self.password = None  # Hashed password
         self.role = None
         self.name = None
         self.phone = None
@@ -26,9 +26,7 @@ class User(BaseModel):
         self._fill_data(data)
 
     def _fill_data(self, data):
-        # Fill model attributes from DB dict
-        # self.id (the numeric autoincrement?) if your DB has `id` column:
-        self.id = data.get('id', None)
+        self.id = data.get('id')
         self.user_id = data['user_id']
         self.password = data['password']
         self.role = data['role']
@@ -48,25 +46,16 @@ class User(BaseModel):
         return self
 
     def add_user(self, user_data):
-        """Check if user already exists, then hash password, then insert."""
-        # Check existence
         try:
-            existing = self.dl.fetch_user_by_id(user_data['user_id'])
-            if existing:
-                # If it didn't raise DB_USER_NOT_FOUND, user must exist
-                raise Exception(DB_USER_ALREADY_EXISTS)
+            self.dl.fetch_user_by_id(user_data['user_id'])
+            raise Exception(DB_USER_ALREADY_EXISTS)
         except Exception as e:
             if str(e) != DB_USER_NOT_FOUND:
-                # Some other error
                 raise
-
-        # Hash the password
         plain_pw = user_data['password'].encode('utf-8')
         hashed_pw = bcrypt.hashpw(plain_pw, bcrypt.gensalt()).decode('utf-8')
         user_data['password'] = hashed_pw
-
         self.dl.insert_user(user_data)
-        # Load the inserted user so we have all fields
         data = self.dl.fetch_user_by_id(user_data['user_id'])
         self._fill_data(data)
         return self
@@ -77,11 +66,19 @@ class User(BaseModel):
     def delete_user(self, user_id):
         self.dl.delete_user(user_id)
 
+    def update_password(self, user_id, old_password, new_password):
+        self.load_by_id(user_id)
+        if not self.verify_password(old_password):
+            raise Exception(DB_INVALID_CREDENTIALS)
+        hashed_new = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        self.dl.update_user_password(user_id, hashed_new)
+        self.password = hashed_new
+        return True
+
     def to_dict(self):
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'password': self.password,  # ideally not returned in production
             'role': self.role,
             'name': self.name,
             'phone': self.phone,
