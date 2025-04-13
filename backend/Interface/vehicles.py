@@ -10,13 +10,14 @@ class VehicleModel(BaseModel):
     license_plate: str
     status: str = "Available"
     last_maintenance: str = None
+    location: str = None 
 
-@vehicles_bp.route('/', methods=['GET'])
+@vehicles_bp.route('/getVehicles', methods=['GET'])
 def get_vehicles():
     vehicles = Vehicle.get_all()
     return make_response(jsonify([v.to_dict() for v in vehicles]), HTTPStatus.OK)
 
-@vehicles_bp.route('/', methods=['POST'])
+@vehicles_bp.route('/addVehicles', methods=['POST'])
 def add_vehicle():
     try:
         data = VehicleModel(**request.get_json())
@@ -27,26 +28,28 @@ def add_vehicle():
         type=data.type,
         license_plate=data.license_plate,
         status=data.status,
-        last_maintenance=data.last_maintenance
+        last_maintenance=data.last_maintenance,
+        location=data.location 
     )
     return make_response(jsonify(vehicle.to_dict()), HTTPStatus.CREATED)
 
-@vehicles_bp.route('/<int:vehicle_id>', methods=['PUT'])
-def update_vehicle(vehicle_id):
-    vehicle = Vehicle.get_by_id(vehicle_id)
-    if not vehicle:
-        return make_response(jsonify({'error': 'Vehicle not found'}), HTTPStatus.NOT_FOUND)
+# @vehicles_bp.route('/<int:vehicle_id>', methods=['PUT'])
+# def update_vehicle(vehicle_id):
+#     vehicle = Vehicle.get_by_id(vehicle_id)
+#     if not vehicle:
+#         return make_response(jsonify({'error': 'Vehicle not found'}), HTTPStatus.NOT_FOUND)
     
-    req_data = request.get_json()
-    vehicle.update(
-        type=req_data.get('type'),
-        license_plate=req_data.get('license_plate'),
-        status=req_data.get('status'),
-        last_maintenance=req_data.get('last_maintenance')
-    )
-    return make_response(jsonify(vehicle.to_dict()), HTTPStatus.OK)
+#     req_data = request.get_json()
+#     vehicle.update(
+#         type=req_data.get('type'),
+#         license_plate=req_data.get('license_plate'),
+#         status=req_data.get('status'),
+#         last_maintenance=req_data.get('last_maintenance'),
+#         location=req_data.get('location')  # Added location
+#     )
+#     return make_response(jsonify(vehicle.to_dict()), HTTPStatus.OK)
 
-@vehicles_bp.route('/<int:vehicle_id>', methods=['DELETE'])
+@vehicles_bp.route('/deleteVehicles<int:vehicle_id>', methods=['DELETE'])
 def delete_vehicle(vehicle_id):
     vehicle = Vehicle.get_by_id(vehicle_id)
     if not vehicle:

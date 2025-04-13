@@ -7,6 +7,7 @@ class Vehicle(db.Model):
     license_plate = db.Column(db.String(10), unique=True, nullable=False)
     status = db.Column(db.Enum('Available', 'In Use', 'Under Maintenance'), default='Available')
     last_maintenance = db.Column(db.Date, nullable=True)
+    location = db.Column(db.String(100), nullable=True)  
 
     def to_dict(self):
         return {
@@ -14,12 +15,13 @@ class Vehicle(db.Model):
             "type": self.type,
             "license_plate": self.license_plate,
             "status": self.status,
-            "last_maintenance": self.last_maintenance.isoformat() if self.last_maintenance else None
+            "last_maintenance": self.last_maintenance.isoformat() if self.last_maintenance else None,
+            "location": self.location 
         }
 
     @classmethod
-    def create(cls, type, license_plate, status="Available", last_maintenance=None):
-        vehicle = cls(type=type, license_plate=license_plate, status=status, last_maintenance=last_maintenance)
+    def create(cls, type, license_plate, status="Available", last_maintenance=None, location=None):
+        vehicle = cls(type=type, license_plate=license_plate, status=status, last_maintenance=last_maintenance, location=location)
         db.session.add(vehicle)
         db.session.commit()
         return vehicle
@@ -32,7 +34,7 @@ class Vehicle(db.Model):
     def get_by_id(cls, id):
         return cls.query.get(id)
 
-    def update(self, type=None, license_plate=None, status=None, last_maintenance=None):
+    def update(self, type=None, license_plate=None, status=None, last_maintenance=None, location=None):
         if type is not None:
             self.type = type
         if license_plate is not None:
@@ -41,6 +43,8 @@ class Vehicle(db.Model):
             self.status = status
         if last_maintenance is not None:
             self.last_maintenance = last_maintenance
+        if location is not None:
+            self.location = location
         db.session.commit()
 
     def delete(self):

@@ -1,8 +1,10 @@
 from DataLayer.db import db
+from Models.User import User  # Import User model
 
-class Worker(db.Model):
-    __tablename__ = 'workers'
+class Employee(db.Model):
+    __tablename__ = 'employees'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Link to Users
     identity = db.Column(db.String(50), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
@@ -13,6 +15,7 @@ class Worker(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "identity": self.identity,
             "name": self.name,
             "phone": self.phone,
@@ -22,11 +25,28 @@ class Worker(db.Model):
         }
 
     @classmethod
-    def create(cls, identity, name, phone, location, joining_date, worker_type):
-        worker = cls(identity=identity, name=name, phone=phone, location=location, joining_date=joining_date, worker_type=worker_type)
-        db.session.add(worker)
+    def create(cls, identity, name, phone, location, joining_date, worker_type, password):
+        # Create a User entry with identity as username, role as 'worker'
+        user = User.create(
+            username=identity,  # Use identity as username
+            role='worker',
+            password=password,
+            worker_type=worker_type
+        )
+        
+        # Create the Employee entry linked to the User
+        employee = cls(
+            user_id=user.id,
+            identity=identity,
+            name=name,
+            phone=phone,
+            location=location,
+            joining_date=joining_date,
+            worker_type=worker_type
+        )
+        db.session.add(employee)
         db.session.commit()
-        return worker
+        return employee
 
     @classmethod
     def get_all(cls):
@@ -52,5 +72,9 @@ class Worker(db.Model):
         db.session.commit()
 
     def delete(self):
+        # Optionally delete the linked User entry as well (cascade delete could handle this)
+        user = User.query.get(self.user_id)
+        if user:
+            db.session.delete(user)
         db.session.delete(self)
         db.session.commit()

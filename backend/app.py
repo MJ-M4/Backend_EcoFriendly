@@ -6,7 +6,7 @@ from Interface.bins import bins_bp
 from Interface.payments import payments_bp
 from Interface.shifts import shifts_bp
 from Interface.vehicles import vehicles_bp
-from Interface.workers import workers_bp
+from Interface.employees import employees_bp
 from config import Config
 
 app = Flask(__name__)
@@ -22,7 +22,7 @@ app.register_blueprint(bins_bp, url_prefix='/api/bins')
 app.register_blueprint(payments_bp, url_prefix='/api/payments')
 app.register_blueprint(shifts_bp, url_prefix='/api/shifts')
 app.register_blueprint(vehicles_bp, url_prefix='/api/vehicles')
-app.register_blueprint(workers_bp, url_prefix='/api/workers')
+app.register_blueprint(employees_bp, url_prefix='/api/employees')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
