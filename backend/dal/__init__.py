@@ -1,0 +1,1 @@
+# makes "from dal.bins import BinsDAL" possible

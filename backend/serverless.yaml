@@ -1,29 +1,295 @@
-service: login-backend1  # Name of your service
+service: ecofriendly-backend
+frameworkVersion: "4"
 
+############################
+#  Plugins & Local Runtime #
+############################
+plugins:
+  - serverless-python-requirements   # bundles your venv
+  - serverless-offline              # "sls offline" ⇒ http://localhost:3000
+
+################################
+#  Provider (only for offline)  #
+################################
 provider:
   name: aws
-  runtime: python3.11  # Update to your Python version
-  region: us-east-1    # Update to your preferred region
-  deploymentBucket:
-    name: login-backend-deployment-bucket  # Specify your bucket name
+  runtime: python3.11              # same as your local interpreter
+  stage: local
+  region: us-east-1                # dummy – we stay local
+  memorySize: 256
+  timeout: 10
+  environment:
+    STAGE: ${self:provider.stage}
+    CONFIG_PATH: "${self:service}/config.ini"   # MySQL creds live here
 
-functions:
-  login:
-    handler: app.lambda_handler  # Points to the login function in app.py
-    events:
-      - http:
-          path: login            # API Gateway endpoint
-          method: post           # HTTP method
-          cors: true             # Enable CORS
-
-plugins:
-  - serverless-python-requirements
+################################
+# Packaging / venv -> Lambda   #
+################################
+package:
+  patterns:
+    - "!node_modules/**"
+    - "!venv/**"
+    - "!tests/**"
+    - "src/**"                      # ship source
+    - "config.ini"                  # DB config
 
 custom:
   pythonRequirements:
-    dockerizePip: false
+    dockerizePip: non-linux        # faster on Mac/Win
+    slim: true                     # strip symbols
+  serverless-offline:
+    httpPort: 5000                # → http://localhost:5000
+    reloadHandler: true            # hot‑reload on save
+    noPrependStageInUrl: true
 
-package:
-  individually: true
-  exclude:
-    - node_modules/**  # Exclude unnecessary files
+#########################
+# Shared HTTP settings  #
+#########################
+defaults: &defaults
+  cors: true
+  payload: "2.0"
+
+##############################
+#  ⬇️  Functions per domain  #
+##############################
+functions:
+
+  # ========  AUTH  ======== #
+  login:
+    handler: src.handlers.auth.login
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/auth/login
+          method: post
+
+  # ========  USERS  ======= #
+  createUser:
+    handler: src.handlers.users.create_user
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/users
+          method: post
+  listUsers:
+    handler: src.handlers.users.list_users
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/users
+          method: get
+  getUser:
+    handler: src.handlers.users.get_user
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/users/{user_id}
+          method: get
+  updateUser:
+    handler: src.handlers.users.update_user
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/users/{user_id}
+          method: put
+  deleteUser:
+    handler: src.handlers.users.delete_user
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/users/{user_id}
+          method: delete
+
+  # ========  BINS  ======== #
+  createBin:
+    handler: src.handlers.bins.create_bin
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/bins
+          method: post
+  listBins:
+    handler: src.handlers.bins.list_bins
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/bins
+          method: get
+  getBin:
+    handler: src.handlers.bins.get_bin
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/bins/{bin_id}
+          method: get
+  updateBin:
+    handler: src.handlers.bins.update_bin
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/bins/{bin_id}
+          method: put
+  deleteBin:
+    handler: src.handlers.bins.delete_bin
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/bins/{bin_id}
+          method: delete
+
+  # ========  HARDWARE  ======== #
+  createHardware:
+    handler: src.handlers.hardware.create_hardware
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/hardware
+          method: post
+  listHardware:
+    handler: src.handlers.hardware.list_hardware
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/hardware
+          method: get
+  getHardware:
+    handler: src.handlers.hardware.get_hardware
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/hardware/{hw_id}
+          method: get
+  updateHardware:
+    handler: src.handlers.hardware.update_hardware
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/hardware/{hw_id}
+          method: put
+  deleteHardware:
+    handler: src.handlers.hardware.delete_hardware
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/hardware/{hw_id}
+          method: delete
+
+  # ========  VEHICLES  ======== #
+  createVehicle:
+    handler: src.handlers.vehicles.create_vehicle
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/vehicles
+          method: post
+  listVehicles:
+    handler: src.handlers.vehicles.list_vehicles
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/vehicles
+          method: get
+  getVehicle:
+    handler: src.handlers.vehicles.get_vehicle
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/vehicles/{vehicle_id}
+          method: get
+  updateVehicle:
+    handler: src.handlers.vehicles.update_vehicle
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/vehicles/{vehicle_id}
+          method: put
+  deleteVehicle:
+    handler: src.handlers.vehicles.delete_vehicle
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/vehicles/{vehicle_id}
+          method: delete
+
+  # ========  SHIFTS  ======== #
+  createShift:
+    handler: src.handlers.shifts.create_shift
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/shifts
+          method: post
+  listShifts:
+    handler: src.handlers.shifts.list_shifts
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/shifts
+          method: get
+  getShift:
+    handler: src.handlers.shifts.get_shift
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/shifts/{shift_id}
+          method: get
+  updateShift:
+    handler: src.handlers.shifts.update_shift
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/shifts/{shift_id}
+          method: put
+  deleteShift:
+    handler: src.handlers.shifts.delete_shift
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/shifts/{shift_id}
+          method: delete
+
+  # ========  PAYMENTS  ======== #
+  createPayment:
+    handler: src.handlers.payments.create_payment
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/payments
+          method: post
+  listPayments:
+    handler: src.handlers.payments.list_payments
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/payments
+          method: get
+  getPayment:
+    handler: src.handlers.payments.get_payment
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/payments/{payment_id}
+          method: get
+  markPaymentPaid:
+    handler: src.handlers.payments.mark_paid
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/payments/{payment_id}/pay
+          method: put
+  deletePayment:
+    handler: src.handlers.payments.delete_payment
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/payments/{payment_id}
+          method: delete
+
+  # ========  ALERTS  ======== #
+  listAlerts:
+    handler: src.handlers.alerts.list_alerts
+    events:
+      - httpApi:
+          <<: *defaults
+          path: /api/alerts
+          method: get

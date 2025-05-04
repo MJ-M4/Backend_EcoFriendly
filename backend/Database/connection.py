@@ -1,37 +1,35 @@
-# backend/Database/connection.py
-import mysql.connector
-from mysql.connector import Error
-from DataLayer.errors import DB_CONNECTION_ERROR
+import os, pathlib, configparser
+import mysql.connector as _mysql
+from threading import Lock
+from common.errors import ErrorMessage
+
+_CFG = pathlib.Path(__file__).parent.parent / "config.ini"
 
 class DatabaseConnection:
-    """Singleton-like approach to connect/disconnect from MySQL."""
+    _instance = None
+    _lock     = Lock()
 
-    def __init__(self, config=None):
-        # Default config or override
-        if config is None:
-            config = {
-                'host': 'localhost',
-                'database': 'ecofriendly',
-                'user': 'root',
-                'password': '123456',
-            }
-        self.config = config
-        self.connection = None
+    def __new__(cls):
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super().__new__(cls)
+                cls._instance._config     = cls._read_cfg()
+                cls._instance._connection = None
+            return cls._instance
 
-    def connect(self):
-        try:
-            self.connection = mysql.connector.connect(**self.config)
-            if self.connection.is_connected():
-                print("MySQL connection successful.")
-        except Error as e:
-            print(f"Error connecting to MySQL: {e}")
-            raise Exception(DB_CONNECTION_ERROR) from e
+    # ---------- helpers ----------
+    @staticmethod
+    def _read_cfg():
+        cp = configparser.ConfigParser()
+        if not cp.read(_CFG):
+            raise RuntimeError(f"config.ini not found at {_CFG}")
+        return dict(cp[os.getenv("ECO_ENV", "local")])
 
-    def disconnect(self):
-        if self.connection and self.connection.is_connected():
-            self.connection.close()
-            print("MySQL connection closed.")
-
-    def get_connection(self):
-        """Return the active connection (make sure to call connect() first)."""
-        return self.connection
+    # ---------- public ----------
+    def conn(self):
+        if not self._connection or not self._connection.is_connected():
+            try:
+                self._connection = _mysql.connect(**self._config)
+            except _mysql.Error as exc:
+                raise RuntimeError(ErrorMessage.DB_CONNECTION_FAILED) from exc
+        return self._connection
