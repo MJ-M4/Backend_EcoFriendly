@@ -36,7 +36,5 @@ functions:
 package:
   patterns:
     - '!node_modules/**'
-    - '!venv/**'
     - 'src/**'
     - 'config.ini'
-    - 'wsgi_handler.py'
