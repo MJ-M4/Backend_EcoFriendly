@@ -17,7 +17,11 @@ def login():
             raise InvalidCredentialsError("Identity and password are required")
         # Log the data received for debugging purposes
         print(f"The data received for login is: {data}")
-        login_input = LoginInput(**data)
+        identity = data.get('identity') 
+        password = data.get('password')
+        if not identity or not password:
+            raise InvalidCredentialsError("Identity and password cannot be empty")
+        login_input = LoginInput(identity=data['identity'], password=data['password'])
 
         user, stored_hash = get_user_by_identity(login_input.identity)
 

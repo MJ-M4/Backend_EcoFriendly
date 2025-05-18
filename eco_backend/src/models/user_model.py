@@ -1,40 +1,56 @@
-from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import date, datetime
+from pydantic import BaseModel, Field
+from sqlalchemy import Column, Integer, String, Date, DateTime
+from src.models.db import Base
+
+# ----------------- Pydantic Models -----------------
+class UserResponse(BaseModel):
+    id: int
+    identity: str
+    name: str
+    role: str
+    worker_type: Optional[str] = None
+    class Config:
+        from_attributes = True
 
 class LoginInput(BaseModel):
     identity: str = Field(..., min_length=5, max_length=20)
     password: str = Field(..., min_length=6)
 
-class User:
-    def __init__(
-        self,
-        user_id: int,
-        identity: str,
-        name: str,
-        phone: Optional[str],
-        location: Optional[str],
-        joining_date: Optional[date],
-        role: str,
-        worker_type: Optional[str],
-        created_at: datetime
-    ):
-        self._user_id = user_id
-        self._identity = identity
-        self._name = name
-        self._phone = phone
-        self._location = location
-        self._joining_date = joining_date
-        self._role = role
-        self._worker_type = worker_type
-        self._created_at = created_at
+class EmployeeCreate(BaseModel):
+    identity: str
+    name: str
+    phone: str
+    location: str
+    joining_date: date
+    role: str
+    worker_type: str
+    password: str
 
-    def get_id(self): return self._user_id
-    def get_identity(self): return self._identity
-    def get_name(self): return self._name
-    def get_phone(self): return self._phone
-    def get_location(self): return self._location
-    def get_joining_date(self): return self._joining_date
-    def get_role(self): return self._role
-    def get_worker_type(self): return self._worker_type
-    def get_created_at(self): return self._created_at
+class EmployeeOut(BaseModel):
+    identity: str
+    name: str
+    phone: str
+    location: str
+    joining_date: date
+    role: str
+    worker_type: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+# ----------------- SQLAlchemy ORM -----------------
+class EmployeeORM(Base):
+    __tablename__ = "employees"
+
+    id = Column(Integer, primary_key=True, index=True)
+    identity = Column(String(20), unique=True, nullable=False)
+    name = Column(String(100), nullable=False)
+    phone = Column(String(20))
+    location = Column(String(100))
+    joining_date = Column(Date)
+    role = Column(String(20), nullable=False)
+    worker_type = Column(String(50))
+    created_at = Column(DateTime, nullable=False)
+    hashed_password = Column(String(256), nullable=False)

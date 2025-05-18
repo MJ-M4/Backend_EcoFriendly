@@ -1,37 +1,65 @@
-from src.models.user_model import User
-from src.Database import Database
-from mysql.connector import Error
+from sqlalchemy.orm import Session
+from src.models.db import SessionLocal
+from src.errors.general_errors import DataFetchError
+from src.models.user_model import EmployeeORM, EmployeeCreate, EmployeeOut
 from datetime import datetime
-
-def get_all_employees():
-    db = Database()
-    query = "SELECT id, identity, name, phone, location, joining_date, worker_type, created_at FROM employees"
-    rows = db.query(query)
-    db.close()
-    return rows
+import hashlib
 def get_user_by_identity(identity: str):
+    session: Session = SessionLocal()
     try:
-        db = Database()
-        query = "SELECT * FROM employees WHERE identity = %s"
-        row = db.query_one(query, (identity,))
-
-        if row:
-            created_at = row["created_at"] if isinstance(row["created_at"], datetime) else datetime.strptime(str(row["created_at"]), '%Y-%m-%d %H:%M:%S')
-            user = User(
-                user_id=row["id"],
-                identity=row["identity"],
-                name=row["name"],
-                phone=row["phone"],
-                location=row["location"],
-                joining_date=row["joining_date"],
-                role=row["role"],
-                worker_type=row["worker_type"],
-                created_at=created_at
-            )
-            return user, row["hashed_password"]
-        return None, None
-    except Error as e:
-        print(f"[DB ERROR] {e}")
-        return None, None
+        user = session.query(EmployeeORM).filter(EmployeeORM.identity == identity).first()
+        return user, user.hashed_password if user else (None, None)
+    except Exception as e:
+        raise DataFetchError(f"[SQLAlchemy ERROR] {str(e)}")
     finally:
-        db.close()
+        session.close()
+
+
+def fetch_all_employees():
+    session: Session = SessionLocal()
+    try:
+        employees = session.query(EmployeeORM).all()
+        return [EmployeeOut.model_validate(emp).model_dump() for emp in employees]
+    except Exception as e:
+        raise DataFetchError(f"[Fetch Error] {str(e)}")
+    finally:
+        session.close()
+
+def add_employee(employee: EmployeeCreate):
+    session: Session = SessionLocal()
+    try:
+        hashed_pw = hashlib.sha256(employee.password.encode("utf-8")).hexdigest()
+        new_emp = EmployeeORM(
+            identity=employee.identity,
+            name=employee.name,
+            phone=employee.phone,
+            location=employee.location,
+            joining_date=employee.joining_date,
+            role=employee.role,
+            worker_type=employee.worker_type,
+            created_at=datetime.utcnow(),
+            hashed_password=hashed_pw
+        )
+        session.add(new_emp)
+        session.commit()
+        session.refresh(new_emp)
+        return EmployeeOut.model_validate(new_emp).model_dump()
+    except Exception as e:
+        session.rollback()
+        raise DataFetchError(f"[Add Error] {str(e)}")
+    finally:
+        session.close()
+
+def delete_employee_by_identity(identity: str):
+    session: Session = SessionLocal()
+    try:
+        emp = session.query(EmployeeORM).filter_by(identity=identity).first()
+        if not emp:
+            raise DataFetchError("Employee not found.")
+        session.delete(emp)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        raise DataFetchError(f"[Delete Error] {str(e)}")
+    finally:
+        session.close()

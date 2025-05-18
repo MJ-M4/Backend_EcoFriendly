@@ -1,12 +1,9 @@
-def login_success(user):
+from src.models.user_model import UserResponse
+
+def login_success(user_obj):
+    user_response = UserResponse.model_validate(user_obj)
     return {
         "status": "success",
         "message": "Login successful",
-        "user": {
-            "id": user.get_id(),
-            "identity": user.get_identity(),
-            "name": user.get_name(),
-            "role": user.get_role().lower().strip(),
-            "worker_type": user.get_worker_type()
-        }
+        "user": user_response.model_dump()
     }

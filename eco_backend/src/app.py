@@ -3,10 +3,9 @@ from flask import Flask
 from src.interface.auth_routes import auth_bp
 from src.interface.employee_routes import employee_bp
 
-
 app = Flask(__name__)
 
-# Register blueprints
+# Register Blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(employee_bp)
 
