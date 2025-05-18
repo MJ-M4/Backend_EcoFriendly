@@ -5,13 +5,18 @@ from src.errors.auth_errors import InvalidCredentialsError
 from src.statuses.auth_status import login_success
 import hashlib
 
-
-auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
     try:
         data = request.get_json()
+        if not data:
+            raise InvalidCredentialsError("No data provided")
+        if 'identity' not in data or 'password' not in data:
+            raise InvalidCredentialsError("Identity and password are required")
+        # Log the data received for debugging purposes
+        print(f"The data received for login is: {data}")
         login_input = LoginInput(**data)
 
         user, stored_hash = get_user_by_identity(login_input.identity)
@@ -23,11 +28,11 @@ def login():
         if hash_input != stored_hash:
             raise InvalidCredentialsError("Incorrect password")
 
-        return jsonify(login_success(user))
+        return login_success(user)  # returns a full `jsonify(...)` object already
 
     except InvalidCredentialsError as e:
-        return jsonify({"status": "error", "message": str(e)}), 401
+        return jsonify({"status": "error", "message": e.message})
+    
     except Exception as e:
         print(f"[LOGIN ERROR] {e}")
-        return jsonify({"status": "error", "message": "Internal server error"}), 500
-
+        return jsonify({"status": "error", "message": "Internal server error"})

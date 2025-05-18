@@ -25,15 +25,13 @@ custom:
   serverless-offline:
     httpPort: 5005
 functions:
-  app:
-    handler: wsgi_handler.handler
+  login:
+    handler: src/handlers/login_handler.handler
     events:
       - http:
-          path: api/auth/login
+          path: login
           method: post
-      - http:
-          path: api/auth/employees
-          method: get
+          cors: false
 
 package:
   patterns:
