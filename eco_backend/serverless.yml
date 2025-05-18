@@ -16,7 +16,7 @@ plugins:
 
 custom:
   wsgi:
-    app: src.app.app
+    app: src.app.app          # ✅ Correct path to your Flask app instance
     packRequirements: false
 
   pythonRequirements:
@@ -24,14 +24,16 @@ custom:
 
   serverless-offline:
     httpPort: 5005
-
 functions:
-  login:
+  app:
     handler: wsgi_handler.handler
     events:
       - http:
           path: api/auth/login
           method: post
+      - http:
+          path: api/auth/employees
+          method: get
 
 package:
   patterns:

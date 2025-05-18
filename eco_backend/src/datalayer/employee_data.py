@@ -3,6 +3,12 @@ from src.Database import Database
 from mysql.connector import Error
 from datetime import datetime
 
+def get_all_employees():
+    db = Database()
+    query = "SELECT id, identity, name, phone, location, joining_date, worker_type, created_at FROM employees"
+    rows = db.query(query)
+    db.close()
+    return rows
 def get_user_by_identity(identity: str):
     try:
         db = Database()
@@ -18,15 +24,14 @@ def get_user_by_identity(identity: str):
                 phone=row["phone"],
                 location=row["location"],
                 joining_date=row["joining_date"],
+                role=row["role"],
                 worker_type=row["worker_type"],
                 created_at=created_at
             )
             return user, row["hashed_password"]
         return None, None
-
     except Error as e:
         print(f"[DB ERROR] {e}")
         return None, None
     finally:
         db.close()
-
