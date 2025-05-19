@@ -1,0 +1,66 @@
+service: ecofriendly-backend
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: python3.11
+  stage: local
+  region: us-east-1
+  environment:
+    CONFIG_PATH: "${self:service}/config.ini"
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-offline
+
+custom:
+  wsgi:
+    app: src.app.app
+    packRequirements: false
+
+  pythonRequirements:
+    dockerizePip: true
+
+  serverless-offline:
+    httpPort: 5005
+
+functions:
+
+  login:
+    handler: src/handlers/login_handler.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: false
+
+  getEmployees:
+    handler: src/handlers/employees_handler.handler
+    events:
+      - http:
+          path: api/employees
+          method: get
+          cors: true
+
+  addEmployee:
+    handler: src/handlers/employees_handler.handler
+    events:
+      - http:
+          path: api/employees
+          method: post
+          cors: true
+
+  deleteEmployee:
+    handler: src/handlers/employees_handler.handler
+    events:
+      - http:
+          path: api/employees/{identity}
+          method: delete
+          cors: true
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - 'src/**'
+    - 'config.ini'
