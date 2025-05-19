@@ -1,2 +1,6 @@
-# backend/models/__init__.py
-# Empty for now
+from .User import User
+from .Bin import Bin
+from .Payment import Payment
+from .Shift import Shift
+from .Vehicle import Vehicle
+from .Employee import Employee
