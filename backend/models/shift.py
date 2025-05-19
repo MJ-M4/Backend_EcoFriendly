@@ -10,3 +10,5 @@ class Shift(db.Model):
     end_time = db.Column(db.Time, nullable=False)
     location = db.Column(db.String(100))
     worker = db.relationship('Worker', backref='shifts')
+
+    
