@@ -26,7 +26,6 @@ custom:
     httpPort: 5005
 
 functions:
-
   login:
     handler: src/handlers/login_handler.handler
     events:
@@ -39,7 +38,7 @@ functions:
     handler: src/handlers/employees_handler.handler
     events:
       - http:
-          path: api/employees
+          path: getEmployees
           method: get
           cors: true
 
@@ -47,7 +46,7 @@ functions:
     handler: src/handlers/employees_handler.handler
     events:
       - http:
-          path: api/employees
+          path: addEmployees
           method: post
           cors: true
 
@@ -55,12 +54,36 @@ functions:
     handler: src/handlers/employees_handler.handler
     events:
       - http:
-          path: api/employees/{identity}
+          path: deleteEmployees/{identity}
+          method: delete
+          cors: true
+
+  getVehicles:
+    handler: src/handlers/vehicle_handler.handler
+    events:
+      - http:
+          path: getVehicles
+          method: get
+          cors: true
+
+  addVehicle:
+    handler: src/handlers/vehicle_handler.handler
+    events:
+      - http:
+          path: addVehicle
+          method: post
+          cors: true
+
+  deleteVehicle:
+    handler: src/handlers/vehicle_handler.handler
+    events:
+      - http:
+          path: deleteVehicle/{licensePlate}
           method: delete
           cors: true
 
 package:
   patterns:
-    - '!node_modules/**'
-    - 'src/**'
-    - 'config.ini'
+    - "!node_modules/**"
+    - "src/**"
+    - "config.ini"

@@ -6,7 +6,6 @@ from src.models.db import Base
 
 # ----------------- Pydantic Models -----------------
 class UserResponse(BaseModel):
-    id: int
     identity: str
     name: str
     role: str
@@ -43,9 +42,8 @@ class EmployeeOut(BaseModel):
 # ----------------- SQLAlchemy ORM -----------------
 class EmployeeORM(Base):
     __tablename__ = "employees"
-
-    id = Column(Integer, primary_key=True, index=True)
-    identity = Column(String(20), unique=True, nullable=False)
+    
+    identity = Column(String(20),primary_key=True, unique=True, nullable=False)
     name = Column(String(100), nullable=False)
     phone = Column(String(20))
     location = Column(String(100))

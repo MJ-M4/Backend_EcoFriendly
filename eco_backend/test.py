@@ -3,7 +3,7 @@ import mysql.connector
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="123456",
+    password="Jayusi2024",
     database="ecofriendly"
 )
 print("Connected!" if conn.is_connected() else "Failed to connect.")
