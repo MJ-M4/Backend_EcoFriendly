@@ -1,0 +1,189 @@
+{
+  "C:\\Users\\RScho\\Desktop\\BK\\Backend_EcoFriendly\\eco_backend\\serverless.yml": {
+    "versionFramework": "4.14.4",
+    "servicePath": "C:\\Users\\RScho\\Desktop\\BK\\Backend_EcoFriendly\\eco_backend\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "ecofriendly-backend",
+      "frameworkVersion": "4",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.11",
+        "stage": "local",
+        "region": "us-east-1",
+        "environment": {
+          "CONFIG_PATH": "${self:service}/config.ini"
+        }
+      },
+      "plugins": [
+        "serverless-python-requirements",
+        "serverless-wsgi",
+        "serverless-offline"
+      ],
+      "custom": {
+        "wsgi": {
+          "app": "src.app.app",
+          "packRequirements": false
+        },
+        "pythonRequirements": {
+          "dockerizePip": true
+        },
+        "serverless-offline": {
+          "httpPort": 5005
+        }
+      },
+      "functions": {
+        "login": {
+          "handler": "src/handlers/login_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "login",
+                "method": "post",
+                "cors": false
+              }
+            }
+          ]
+        },
+        "getEmployees": {
+          "handler": "src/handlers/employees_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getEmployees",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addEmployee": {
+          "handler": "src/handlers/employees_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "addEmployees",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "deleteEmployee": {
+          "handler": "src/handlers/employees_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "deleteEmployees/{identity}",
+                "method": "delete",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getVehicles": {
+          "handler": "src/handlers/vehicle_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getVehicles",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addVehicle": {
+          "handler": "src/handlers/vehicle_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "addVehicle",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "deleteVehicle": {
+          "handler": "src/handlers/vehicle_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "deleteVehicle/{licensePlate}",
+                "method": "delete",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getBins": {
+          "handler": "src/handlers/bins_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getBins",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addBin": {
+          "handler": "src/handlers/bins_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "addBin",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "deleteBin": {
+          "handler": "src/handlers/bins_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "deleteBin/{binId}",
+                "method": "delete",
+                "cors": true
+              }
+            }
+          ]
+        }
+      },
+      "package": {
+        "patterns": [
+          "!node_modules/**",
+          "src/**",
+          "config.ini"
+        ]
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.11",
+      "stage": "local",
+      "region": "us-east-1",
+      "environment": {
+        "CONFIG_PATH": "${self:service}/config.ini"
+      }
+    },
+    "error": {
+      "message": "request to https://core.serverless.com/api/bff/ failed, reason: getaddrinfo EAI_AGAIN core.serverless.com",
+      "stack": "Error: request to https://core.serverless.com/api/bff/ failed, reason: getaddrinfo EAI_AGAIN core.serverless.com\n    at Authentication.getClientDataFromAccessKey (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:694:18481)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Authentication.getAuthenticatedData (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:694:3689)\n    at async Authentication.authenticate (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:694:21968)\n    at async TraditionalRunner.resolveVariablesAndAuthenticate (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:698:2377)\n    at async TraditionalRunner.run (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1271:27896)\n    at async route (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1302:2779)\n    at async Object.run (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1303:3661)\n    at async run2 (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1303:4815)"
+    },
+    "serviceRawFile": "service: ecofriendly-backend\r\nframeworkVersion: \"4\"\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: python3.11\r\n  stage: local\r\n  region: us-east-1\r\n  environment:\r\n    CONFIG_PATH: \"${self:service}/config.ini\"\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-offline\r\n\r\ncustom:\r\n  wsgi:\r\n    app: src.app.app\r\n    packRequirements: false\r\n\r\n  pythonRequirements:\r\n    dockerizePip: true\r\n\r\n  serverless-offline:\r\n    httpPort: 5005\r\n\r\nfunctions:\r\n  login:\r\n    handler: src/handlers/login_handler.handler\r\n    events:\r\n      - http:\r\n          path: login\r\n          method: post\r\n          cors: false\r\n\r\n  getEmployees:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: getEmployees\r\n          method: get\r\n          cors: true\r\n\r\n  addEmployee:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: addEmployees\r\n          method: post\r\n          cors: true\r\n\r\n  deleteEmployee:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteEmployees/{identity}\r\n          method: delete\r\n          cors: true\r\n\r\n  getVehicles:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: getVehicles\r\n          method: get\r\n          cors: true\r\n\r\n  addVehicle:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: addVehicle\r\n          method: post\r\n          cors: true\r\n\r\n  deleteVehicle:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteVehicle/{licensePlate}\r\n          method: delete\r\n          cors: true\r\n  \r\n  getBins:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: getBins\r\n          method: get\r\n          cors: true\r\n\r\n  addBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: addBin\r\n          method: post\r\n          cors: true\r\n\r\n  deleteBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteBin/{binId}\r\n          method: delete\r\n          cors: true\r\n\r\n\r\npackage:\r\n  patterns:\r\n    - \"!node_modules/**\"\r\n    - \"src/**\"\r\n    - \"config.ini\"\r\n",
+    "command": [
+      "offline"
+    ],
+    "options": {},
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

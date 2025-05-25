@@ -19,7 +19,7 @@ def get_employees():
         employees = fetch_all_employees()
         if not employees:
             raise DataFetchError("No employees found")
-        print(f"The data received for fetching employees is: {employees}")
+        # print(f"The data received for fetching employees is: {employees}")
         # return fetch_success(employees), HTTPStatus.OK
         return jsonify({"status": "success", "employees": employees}), HTTPStatus.OK
     except DataFetchError as e:
@@ -28,7 +28,7 @@ def get_employees():
         return jsonify({"status": "error", "message": str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@employee_bp.route("/addEmployees", methods=["POST"])
+@employee_bp.route("/addEmployee", methods=["POST"])
 def create_employee():
     try:
         data = request.get_json()
@@ -41,7 +41,7 @@ def create_employee():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), HTTPStatus.BAD_REQUEST
 
-@employee_bp.route("/deleteEmployees/<identity>", methods=["DELETE"])
+@employee_bp.route("/deleteEmployee/<identity>", methods=["DELETE"])
 def delete_employee(identity: str):
     try:
         delete_employee_by_identity(identity)

@@ -27,7 +27,7 @@ def create_vehicle():
         data = request.get_json()
         if not data:
             return jsonify({"status": "error", "message": "No data provided"}), HTTPStatus.BAD_REQUEST
-        print(f"The data received for creating a vehicle is: {data}")
+        # print(f"The data received for creating a vehicle is: {data}")
         vehicle = VehicleCreate.model_validate(data)
         result = add_vehicle(vehicle)
         return jsonify({"status": "success", "message": "Vehicle added successfully", "vehicle": result}), HTTPStatus.CREATED

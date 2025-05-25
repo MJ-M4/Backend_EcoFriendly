@@ -46,7 +46,7 @@ functions:
     handler: src/handlers/employees_handler.handler
     events:
       - http:
-          path: addEmployees
+          path: addEmployee
           method: post
           cors: true
 
@@ -54,7 +54,7 @@ functions:
     handler: src/handlers/employees_handler.handler
     events:
       - http:
-          path: deleteEmployees/{identity}
+          path: deleteEmployee/{identity}
           method: delete
           cors: true
 
@@ -81,6 +81,31 @@ functions:
           path: deleteVehicle/{licensePlate}
           method: delete
           cors: true
+  
+  getBins:
+    handler: src/handlers/bins_handler.handler
+    events:
+      - http:
+          path: getBins
+          method: get
+          cors: true
+
+  addBin:
+    handler: src/handlers/bins_handler.handler
+    events:
+      - http:
+          path: addBin
+          method: post
+          cors: true
+
+  deleteBin:
+    handler: src/handlers/bins_handler.handler
+    events:
+      - http:
+          path: deleteBin/{binId}
+          method: delete
+          cors: true
+
 
 package:
   patterns:

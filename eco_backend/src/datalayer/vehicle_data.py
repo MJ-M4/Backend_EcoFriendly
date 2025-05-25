@@ -10,7 +10,7 @@ def fetch_all_vehicles():
         vehicles = session.query(Vehicle).all()
         return [VehicleOut.model_validate(vehicle).model_dump() for vehicle in vehicles]
     except Exception as e:
-        raise DataFetchError(f"[Fetch Error] {str(e)}")
+        raise DataFetchError(f"[Error fetching vehicles] {str(e)}")
     finally:
         session.close()
 
@@ -30,7 +30,7 @@ def add_vehicle(vehicle: VehicleCreate):
         return VehicleOut.model_validate(new_vehicle).model_dump()
     except Exception as e:
         session.rollback()
-        raise DataFetchError(f"[Add Error] {str(e)}")
+        raise DataFetchError(f"[Error adding vehicle] {str(e)}")
     finally:
         session.close()
 
@@ -45,7 +45,7 @@ def delete_vehicle_by_id(licensePlate: str):
         return {"message": "Vehicle deleted successfully."}
     except Exception as e:
         session.rollback()
-        raise DataFetchError(f"[Delete Error] {str(e)}")
+        raise DataFetchError(f"[Error deleting vehicle] {str(e)}")
     finally:
         session.close()
   
