@@ -106,7 +106,71 @@ functions:
           method: delete
           cors: true
 
+  getShifts:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http:
+          path: getShifts
+          method: get
+          cors: true
 
+  addShift:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http:
+          path: addShift
+          method: post
+          cors: true
+
+  deleteShift:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http:
+          path: deleteShift/{shiftId}
+          method: delete
+          cors: true
+
+  updateShift:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http:
+          path: updateShift/{shiftId}
+          method: put
+          cors: true
+
+  proposeShift:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http:
+          path: proposeShift
+          method: post
+          cors: true
+  
+  getPendingProposals:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http:
+          path: getPendingProposals
+          method: get
+          cors: true
+  
+  approveProposal:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http: 
+          path: approveProposal/{proposalId}
+          method: put 
+          cors: true
+  
+  denyProposal:
+    handler: src/handlers/shifts_handler.handler
+    events:
+      - http: 
+          path: denyProposal/{proposalId}
+          method: put
+          cors: true
+      
+          
 package:
   patterns:
     - "!node_modules/**"
