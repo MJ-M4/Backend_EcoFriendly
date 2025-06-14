@@ -169,8 +169,47 @@ functions:
           path: denyProposal/{proposalId}
           method: put
           cors: true
-      
-          
+
+  getPayments:
+    handler: src/handlers/payments_handler.handler
+    events:
+      - http:
+          path: getPayments
+          method: get
+          cors: true
+
+  addPayment:
+    handler: src/handlers/payments_handler.handler
+    events:
+      - http:
+          path: addPayment
+          method: post
+          cors: true
+  
+  updatePayment:
+    handler: src/handlers/payments_handler.handler
+    events:
+      - http:
+          path: updatePayment/{payment_id}
+          method: put
+          cors: true
+
+  deletePayment:
+    handler: src/handlers/payments_handler.handler
+    events:
+      - http:
+          path: deletePayment/{payment_id}
+          method: delete
+          cors: true
+
+  getMyPayments:
+    handler: src/handlers/payments_handler.handler
+    events:
+      - http:
+          path: getMyPayments/{worker_id}
+          method: get
+          cors: true
+         
 package:
   patterns:
     - "!node_modules/**"

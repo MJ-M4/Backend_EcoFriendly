@@ -36,7 +36,7 @@ def add_bin(bin: BinCreate):
             "binId": new_bin.binId,
             "location": new_bin.location,
             "address": new_bin.address,
-            "status": new_bin.status  # استخدم .value هنا للاستجابة
+            "status": new_bin.status 
         }
     except Exception as e:
         session.rollback()

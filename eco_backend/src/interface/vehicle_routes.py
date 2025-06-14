@@ -10,8 +10,6 @@ vehicle_bp = Blueprint("vehicles", __name__)
 def get_vehicles():
     try:
         vehicles = fetch_all_vehicles()
-        if not vehicles:
-            raise DataFetchError("No vehicles found")
         # print(f"The data received for fetching vehicles is: {vehicles}")
         return jsonify({"status": "success", "vehicles": vehicles}), HTTPStatus.OK
     except DataFetchError as e:

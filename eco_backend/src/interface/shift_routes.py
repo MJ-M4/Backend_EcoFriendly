@@ -10,8 +10,6 @@ shift_bp = Blueprint("shifts", __name__)
 def get_shifts():
     try:
         shifts = fetch_all_shifts()
-        if not shifts:
-            raise DataFetchError("No shifts found")
         # print(f"The data received for fetching shifts is: {shifts}")
         return jsonify({"status": "success", "shifts": shifts}), HTTPStatus.OK
     except DataFetchError as e:

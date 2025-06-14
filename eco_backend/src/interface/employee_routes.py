@@ -1,5 +1,3 @@
-# src/interface/employee_routes.py
-
 from flask import Blueprint, request, jsonify
 from http import HTTPStatus
 from src.datalayer.employee_data import (
@@ -17,8 +15,6 @@ employee_bp = Blueprint("employees", __name__)
 def get_employees():
     try:
         employees = fetch_all_employees()
-        if not employees:
-            raise DataFetchError("No employees found")
         # print(f"The data received for fetching employees is: {employees}")
         # return fetch_success(employees), HTTPStatus.OK
         return jsonify({"status": "success", "employees": employees}), HTTPStatus.OK

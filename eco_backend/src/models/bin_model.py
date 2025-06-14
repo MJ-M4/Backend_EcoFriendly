@@ -36,7 +36,7 @@ class BinResponse(BaseModel):
     binId: str
     location: str
     address: str
-    status: str  # غيرنا من BinStatus إلى str مباشرة
+    status: str  
     
     model_config = ConfigDict(
         from_attributes=True

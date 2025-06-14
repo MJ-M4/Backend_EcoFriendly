@@ -10,9 +10,7 @@ bin_bp = Blueprint("bins", __name__)
 def get_bins():
     try:
         bins = fetch_all_bins()
-        if not bins:
-            raise DataFetchError("No bins found")
-        print(f"The data received for fetching bins is: {bins}")
+        # print(f"The data received for fetching bins is: {bins}")
         return jsonify({"status": "success", "bins": bins}), HTTPStatus.OK
     except DataFetchError as e:
         return jsonify({"status": "error", "message": str(e)}), HTTPStatus.NOT_FOUND
