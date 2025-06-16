@@ -42,3 +42,20 @@ def delete_bin(binId):
         return jsonify({"status": "error", "message": str(e)}), HTTPStatus.NOT_FOUND
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
+    
+
+from src.datalayer.bin_data import update_bin_status
+
+@bin_bp.route("/updateBin/<binId>", methods=["PUT"])
+def update_bin(binId):
+    try:
+        data = request.get_json()
+        if not data or "status" not in data or "capacity" not in data:
+            return jsonify({"status": "error", "message": "Missing status or capacity"}), HTTPStatus.BAD_REQUEST
+        
+        updated_bin = update_bin_status(binId, data["status"], data["capacity"])
+        return jsonify({"status": "success", "message": "Bin updated", "bin": updated_bin}), HTTPStatus.OK
+    except DataFetchError as e:
+        return jsonify({"status": "error", "message": str(e)}), HTTPStatus.NOT_FOUND
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR

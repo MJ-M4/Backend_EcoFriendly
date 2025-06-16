@@ -13,7 +13,10 @@ def fetch_all_bins():
             "binId": bin.binId,
             "location": bin.location,
             "address": bin.address,
-            "status": bin.status  
+            "status": bin.status,
+            "lat": bin.lat,
+            "lon": bin.lon,
+            "capacity": bin.capacity  
         } for bin in bins]
     except Exception as e:
         raise DataFetchError(f"[Error fetching bins] {str(e)}")
@@ -27,7 +30,10 @@ def add_bin(bin: BinCreate):
             binId=str(uuid.uuid4())[:5],
             location=bin.location,
             address=bin.address,
-            status=bin.status
+            status=bin.status,
+            lat=bin.lat,
+            lon=bin.lon,
+            capacity=bin.capacity
         )
         session.add(new_bin)
         session.commit()
@@ -36,7 +42,10 @@ def add_bin(bin: BinCreate):
             "binId": new_bin.binId,
             "location": new_bin.location,
             "address": new_bin.address,
-            "status": new_bin.status 
+            "status": new_bin.status,
+            "lat": bin.lat,
+            "lon": bin.lon,
+            "capacity": bin.capacity 
         }
     except Exception as e:
         session.rollback()
@@ -56,5 +65,27 @@ def delete_bin_by_id(binId: str):
     except Exception as e:
         session.rollback()
         raise DataFetchError(f"[Error deleting bin] {str(e)}")
+    finally:
+        session.close()
+
+def update_bin_status(binId: str, new_status: str, new_capacity: int):
+    session: Session = SessionLocal()
+    try:
+        bin = session.query(Bin).filter_by(binId=binId).first()
+        if not bin:
+            raise DataFetchError("Bin not found.")
+
+        bin.status = new_status
+        bin.capacity = new_capacity
+        session.commit()
+
+        return {
+            "binId": bin.binId,
+            "status": bin.status,
+            "capacity": bin.capacity
+        }
+    except Exception as e:
+        session.rollback()
+        raise DataFetchError(f"[Error updating bin] {str(e)}")
     finally:
         session.close()

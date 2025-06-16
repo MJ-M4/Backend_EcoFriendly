@@ -1,6 +1,6 @@
 {
   "C:\\Users\\RScho\\Desktop\\BK\\Backend_EcoFriendly\\eco_backend\\serverless.yml": {
-    "versionFramework": "4.14.4",
+    "versionFramework": "4.17.0",
     "servicePath": "C:\\Users\\RScho\\Desktop\\BK\\Backend_EcoFriendly\\eco_backend\\serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
@@ -62,7 +62,7 @@
           "events": [
             {
               "http": {
-                "path": "addEmployees",
+                "path": "addEmployee",
                 "method": "post",
                 "cors": true
               }
@@ -74,7 +74,7 @@
           "events": [
             {
               "http": {
-                "path": "deleteEmployees/{identity}",
+                "path": "deleteEmployee/{identity}",
                 "method": "delete",
                 "cors": true
               }
@@ -152,6 +152,174 @@
               }
             }
           ]
+        },
+        "updateBin": {
+          "handler": "src/handlers/bins_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "updateBin/{binId}",
+                "method": "put",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getShifts": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getShifts",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addShift": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "addShift",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "deleteShift": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "deleteShift/{shiftId}",
+                "method": "delete",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "updateShift": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "updateShift/{shiftId}",
+                "method": "put",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "proposeShift": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "proposeShift",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getPendingProposals": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getPendingProposals",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "approveProposal": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "approveProposal/{proposalId}",
+                "method": "put",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "denyProposal": {
+          "handler": "src/handlers/shifts_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "denyProposal/{proposalId}",
+                "method": "put",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getPayments": {
+          "handler": "src/handlers/payments_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getPayments",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addPayment": {
+          "handler": "src/handlers/payments_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "addPayment",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "updatePayment": {
+          "handler": "src/handlers/payments_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "updatePayment/{payment_id}",
+                "method": "put",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "deletePayment": {
+          "handler": "src/handlers/payments_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "deletePayment/{payment_id}",
+                "method": "delete",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getMyPayments": {
+          "handler": "src/handlers/payments_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "getMyPayments/{worker_id}",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
         }
       },
       "package": {
@@ -173,9 +341,9 @@
     },
     "error": {
       "message": "request to https://core.serverless.com/api/bff/ failed, reason: getaddrinfo EAI_AGAIN core.serverless.com",
-      "stack": "Error: request to https://core.serverless.com/api/bff/ failed, reason: getaddrinfo EAI_AGAIN core.serverless.com\n    at Authentication.getClientDataFromAccessKey (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:694:18481)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Authentication.getAuthenticatedData (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:694:3689)\n    at async Authentication.authenticate (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:694:21968)\n    at async TraditionalRunner.resolveVariablesAndAuthenticate (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:698:2377)\n    at async TraditionalRunner.run (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1271:27896)\n    at async route (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1302:2779)\n    at async Object.run (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1303:3661)\n    at async run2 (file:///C:/Users/RScho/.serverless/releases/4.14.4/package/dist/sf-core.js:1303:4815)"
+      "stack": "Error: request to https://core.serverless.com/api/bff/ failed, reason: getaddrinfo EAI_AGAIN core.serverless.com\n    at Authentication.getClientDataFromAccessKey (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:830:18549)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Authentication.getAuthenticatedData (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:830:3689)\n    at async Authentication.authenticate (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:830:22036)\n    at async TraditionalRunner.resolveVariablesAndAuthenticate (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:834:2379)\n    at async TraditionalRunner.run (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:1407:27919)\n    at async route (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:1582:2878)\n    at async Object.run (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:1583:3661)\n    at async run2 (file:///C:/Users/RScho/.serverless/releases/4.17.0/package/dist/sf-core.js:1583:4815)"
     },
-    "serviceRawFile": "service: ecofriendly-backend\r\nframeworkVersion: \"4\"\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: python3.11\r\n  stage: local\r\n  region: us-east-1\r\n  environment:\r\n    CONFIG_PATH: \"${self:service}/config.ini\"\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-offline\r\n\r\ncustom:\r\n  wsgi:\r\n    app: src.app.app\r\n    packRequirements: false\r\n\r\n  pythonRequirements:\r\n    dockerizePip: true\r\n\r\n  serverless-offline:\r\n    httpPort: 5005\r\n\r\nfunctions:\r\n  login:\r\n    handler: src/handlers/login_handler.handler\r\n    events:\r\n      - http:\r\n          path: login\r\n          method: post\r\n          cors: false\r\n\r\n  getEmployees:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: getEmployees\r\n          method: get\r\n          cors: true\r\n\r\n  addEmployee:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: addEmployees\r\n          method: post\r\n          cors: true\r\n\r\n  deleteEmployee:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteEmployees/{identity}\r\n          method: delete\r\n          cors: true\r\n\r\n  getVehicles:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: getVehicles\r\n          method: get\r\n          cors: true\r\n\r\n  addVehicle:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: addVehicle\r\n          method: post\r\n          cors: true\r\n\r\n  deleteVehicle:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteVehicle/{licensePlate}\r\n          method: delete\r\n          cors: true\r\n  \r\n  getBins:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: getBins\r\n          method: get\r\n          cors: true\r\n\r\n  addBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: addBin\r\n          method: post\r\n          cors: true\r\n\r\n  deleteBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteBin/{binId}\r\n          method: delete\r\n          cors: true\r\n\r\n\r\npackage:\r\n  patterns:\r\n    - \"!node_modules/**\"\r\n    - \"src/**\"\r\n    - \"config.ini\"\r\n",
+    "serviceRawFile": "service: ecofriendly-backend\r\nframeworkVersion: \"4\"\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: python3.11\r\n  stage: local\r\n  region: us-east-1\r\n  environment:\r\n    CONFIG_PATH: \"${self:service}/config.ini\"\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-offline\r\n\r\ncustom:\r\n  wsgi:\r\n    app: src.app.app\r\n    packRequirements: false\r\n\r\n  pythonRequirements:\r\n    dockerizePip: true\r\n\r\n  serverless-offline:\r\n    httpPort: 5005\r\n\r\nfunctions:\r\n  login:\r\n    handler: src/handlers/login_handler.handler\r\n    events:\r\n      - http:\r\n          path: login\r\n          method: post\r\n          cors: false\r\n\r\n  getEmployees:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: getEmployees\r\n          method: get\r\n          cors: true\r\n\r\n  addEmployee:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: addEmployee\r\n          method: post\r\n          cors: true\r\n\r\n  deleteEmployee:\r\n    handler: src/handlers/employees_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteEmployee/{identity}\r\n          method: delete\r\n          cors: true\r\n\r\n  getVehicles:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: getVehicles\r\n          method: get\r\n          cors: true\r\n\r\n  addVehicle:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: addVehicle\r\n          method: post\r\n          cors: true\r\n\r\n  deleteVehicle:\r\n    handler: src/handlers/vehicle_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteVehicle/{licensePlate}\r\n          method: delete\r\n          cors: true\r\n  \r\n  getBins:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: getBins\r\n          method: get\r\n          cors: true\r\n\r\n  addBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: addBin\r\n          method: post\r\n          cors: true\r\n\r\n  deleteBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteBin/{binId}\r\n          method: delete\r\n          cors: true\r\n  updateBin:\r\n    handler: src/handlers/bins_handler.handler\r\n    events:\r\n      - http:\r\n          path: updateBin/{binId}\r\n          method: put\r\n          cors: true\r\n          \r\n  getShifts:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http:\r\n          path: getShifts\r\n          method: get\r\n          cors: true\r\n\r\n  addShift:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http:\r\n          path: addShift\r\n          method: post\r\n          cors: true\r\n\r\n  deleteShift:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http:\r\n          path: deleteShift/{shiftId}\r\n          method: delete\r\n          cors: true\r\n\r\n  updateShift:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http:\r\n          path: updateShift/{shiftId}\r\n          method: put\r\n          cors: true\r\n\r\n  proposeShift:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http:\r\n          path: proposeShift\r\n          method: post\r\n          cors: true\r\n  \r\n  getPendingProposals:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http:\r\n          path: getPendingProposals\r\n          method: get\r\n          cors: true\r\n  \r\n  approveProposal:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http: \r\n          path: approveProposal/{proposalId}\r\n          method: put \r\n          cors: true\r\n  \r\n  denyProposal:\r\n    handler: src/handlers/shifts_handler.handler\r\n    events:\r\n      - http: \r\n          path: denyProposal/{proposalId}\r\n          method: put\r\n          cors: true\r\n\r\n  getPayments:\r\n    handler: src/handlers/payments_handler.handler\r\n    events:\r\n      - http:\r\n          path: getPayments\r\n          method: get\r\n          cors: true\r\n\r\n  addPayment:\r\n    handler: src/handlers/payments_handler.handler\r\n    events:\r\n      - http:\r\n          path: addPayment\r\n          method: post\r\n          cors: true\r\n  \r\n  updatePayment:\r\n    handler: src/handlers/payments_handler.handler\r\n    events:\r\n      - http:\r\n          path: updatePayment/{payment_id}\r\n          method: put\r\n          cors: true\r\n\r\n  deletePayment:\r\n    handler: src/handlers/payments_handler.handler\r\n    events:\r\n      - http:\r\n          path: deletePayment/{payment_id}\r\n          method: delete\r\n          cors: true\r\n\r\n  getMyPayments:\r\n    handler: src/handlers/payments_handler.handler\r\n    events:\r\n      - http:\r\n          path: getMyPayments/{worker_id}\r\n          method: get\r\n          cors: true\r\n         \r\npackage:\r\n  patterns:\r\n    - \"!node_modules/**\"\r\n    - \"src/**\"\r\n    - \"config.ini\"\r\n",
     "command": [
       "offline"
     ],

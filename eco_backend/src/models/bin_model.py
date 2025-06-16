@@ -1,7 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Any
-from pydantic_core import core_schema
-from sqlalchemy import Column, String,Enum
+from sqlalchemy import Column, String, Float
 from src.models.db import Base
 from enum import Enum
 
@@ -10,21 +8,14 @@ class BinStatus(str, Enum):
     Mid = "Mid"
     Empty = "Empty"
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, 
-        _source_type: Any,
-        _handler: Any,
-    ) -> core_schema.CoreSchema:
-        return core_schema.no_info_plain_validator_function(
-            lambda x: cls(x) if isinstance(x, str) else x,
-        )
-
 class BinCreate(BaseModel):
     location: str
     address: str
     status: BinStatus = BinStatus.Empty
-    
+    lat: float
+    lon: float
+    capacity: float = 0.0
+
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
         json_encoders={
@@ -36,12 +27,15 @@ class BinResponse(BaseModel):
     binId: str
     location: str
     address: str
-    status: str  
-    
+    status: str
+    lat: float
+    lon: float
+    capacity: float
+
     model_config = ConfigDict(
         from_attributes=True
     )
- 
+
 class Bin(Base):
     __tablename__ = "bins"
 
@@ -49,6 +43,6 @@ class Bin(Base):
     location = Column(String(100), nullable=False)
     address = Column(String(100), nullable=False)
     status = Column(String, nullable=False, default=BinStatus.Empty)
-
-
-
+    lat = Column(Float, nullable=False)
+    lon = Column(Float, nullable=False)
+    capacity = Column(Float, nullable=False, default=0.0)

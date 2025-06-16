@@ -105,6 +105,14 @@ functions:
           path: deleteBin/{binId}
           method: delete
           cors: true
+          
+  updateBin:
+    handler: src/handlers/bins_handler.handler
+    events:
+      - http:
+          path: updateBin/{binId}
+          method: put
+          cors: true
 
   getShifts:
     handler: src/handlers/shifts_handler.handler

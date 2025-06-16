@@ -16,7 +16,7 @@ def login():
         if 'identity' not in data or 'password' not in data:
             raise InvalidCredentialsError("Identity and password are required")
         # Log the data received for debugging purposes
-        print(f"The data received for login is: {data}")
+        # print(f"The data received for login is: {data}")
         identity = data.get('identity') 
         password = data.get('password')
         if not identity or not password:
@@ -32,7 +32,7 @@ def login():
         if hash_input != stored_hash:
             raise InvalidCredentialsError("Incorrect password")
 
-        return login_success(user)  # returns a full `jsonify(...)` object already
+        return login_success(user) 
 
     except InvalidCredentialsError as e:
         return jsonify({"status": "error", "message": e.message})
