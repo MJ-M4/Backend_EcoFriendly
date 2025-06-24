@@ -36,7 +36,7 @@ def add_employee(employee: EmployeeCreate):
             location=employee.location,
             joining_date=employee.joining_date,
             role=employee.role,
-            worker_type=employee.worker_type,
+            worker_type=employee.worker_type if employee.role == "worker" else None,  # ✅ Fix here
             created_at=datetime.utcnow(),
             hashed_password=hashed_pw
         )

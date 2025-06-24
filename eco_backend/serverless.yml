@@ -217,6 +217,38 @@ functions:
           path: getMyPayments/{worker_id}
           method: get
           cors: true
+
+  getHardware:
+    handler: src/handlers/hardware_handler.handler
+    events:
+      - http:
+          path: getHardware
+          method: get
+          cors: true
+
+  addHardware:
+    handler: src/handlers/hardware_handler.handler
+    events:
+      - http:
+          path: addHardware
+          method: post
+          cors: true
+
+  updateHardware:
+    handler: src/handlers/hardware_handler.handler
+    events:
+      - http:
+          path: updateHardware/{hw_id}
+          method: put
+          cors: true
+
+  deleteHardware:
+    handler: src/handlers/hardware_handler.handler
+    events:
+      - http:
+          path: deleteHardware/{hw_id}
+          method: delete
+          cors: true
          
 package:
   patterns:
