@@ -26,15 +26,21 @@ def run_bin_simulation(interval_seconds: int = 10):
                 for bin in bins:
                     simulate_bin_status(bin)
                 session.commit()
-                print("[Simulator] Bin statuses updated.")
+                # Print all bin statuses after commit
+                refreshed = session.query(Bin).all()
+                print("\n\x1b[1;36m========== [BIN SIMULATOR] Bin Statuses ==========\x1b[0m")
+                for bin in refreshed:
+                    print(
+                        f"\x1b[36mBinID: {bin.binId:<10} | Location: {bin.location:<8} | "
+                        f"Status: {bin.status:<6} | Capacity: {bin.capacity:.1f}%\x1b[0m"
+                    )
+                print("\x1b[1;36m==================================================\x1b[0m\n")
             except Exception as e:
-                print(f"[Simulator Error] {str(e)}")
+                print(f"\x1b[1;31m[Bin Simulator Error] {str(e)}\x1b[0m")
                 session.rollback()
             finally:
                 session.close()
 
             time.sleep(interval_seconds)
 
-    # Run in background thread
-    thread= threading.Thread(target=simulation_loop, daemon=True)
-    thread.start()
+    threading.Thread(target=simulation_loop, daemon=True).start()
